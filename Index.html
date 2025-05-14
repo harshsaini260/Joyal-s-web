@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday!</title>
+  <style>
+    /* —— Reset & Base —— */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: #333;
+      background: #fdfdfd;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* —— Background Video —— */
+    #bg-video {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      object-fit: cover;
+      filter: brightness(1.2);
+      z-index: -2;
+    }
+
+    /* —— Background Music Toggle —— */
+    #bg-music { display: none; }
+    #music-toggle {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      background: rgba(255,255,255,0.9);
+      border: none; border-radius: 50%;
+      padding: 0.6rem; font-size: 1.4rem;
+      cursor: pointer; z-index: 100;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform .2s;
+    }
+    #music-toggle:hover { transform: scale(1.1); }
+
+    /* —— Header & Nav —— */
+    header {
+      position: fixed; top: 0; width: 100%;
+      background: rgba(255,255,255,0.6);
+      padding: 1rem 0; z-index: 50;
+      backdrop-filter: blur(6px);
+    }
+    nav {
+      display: flex; justify-content: center; gap: 2rem;
+    }
+    nav a {
+      color: #333; text-decoration: none; font-size: 1.1rem;
+      position: relative; padding: .2rem 0;
+    }
+    nav a::after {
+      content: ''; position: absolute;
+      left: 0; bottom: -4px; width: 0; height: 3px;
+      background: linear-gradient(45deg,#ff9a9e,#fad0c4);
+      transition: width .3s;
+    }
+    nav a:hover::after { width: 100%; }
+
+    /* —— Overlay Prompt —— */
+    #overlay {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(255,255,255,0.85);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 99;
+      animation: fadeIn 1s;
+    }
+    .overlay-content {
+      text-align: center; color: #333;
+    }
+    .overlay-content h1 {
+      font-size: 3rem; margin-bottom: 1rem;
+      animation: popIn 1s;
+    }
+    .overlay-content button {
+      margin: 0 .5rem; padding: .8rem 1.2rem;
+      font-size: 1.2rem; border: none;
+      border-radius: 25px;
+      background: linear-gradient(45deg,#ff9a9e,#fad0c4);
+      color: #333; cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: transform .2s;
+    }
+    .overlay-content button:hover { transform: scale(1.1); }
+
+    /* —— Sections —— */
+    section {
+      padding: 6rem 2rem 4rem;
+      max-width: 1000px; margin: 2rem auto 0 auto;
+      text-align: center;
+      background: rgba(255,255,255,0.8);
+      border-radius: 12px;
+      backdrop-filter: blur(6px);
+      color: #333;
+    }
+    h2 {
+      font-size: 2.5rem; margin-bottom: 1rem;
+      animation: bounce 1.2s infinite;
+      color: #ff6ec4;
+    }
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50%     { transform: translateY(-8px); }
+    }
+
+    /* —— Wisdom / Home —— */
+    #home p {
+      font-size: 1.5rem; margin: 1rem 0;
+      animation: fadeInUp 1s ease forwards;
+    }
+    #home blockquote {
+      font-size: 1.2rem; font-style: italic;
+      margin-top: 1rem; color: #7873f5;
+    }
+
+    /* —— Shayari —— */
+    #shayari p {
+      font-size: 1.3rem; line-height: 1.4;
+      margin: .5rem 0; opacity: 0;
+      animation: fadeInUp 1s ease forwards;
+    }
+    #shayari p:nth-child(1) { animation-delay: 1s; }
+    #shayari p:nth-child(2) { animation-delay: 2s; }
+    #shayari p:nth-child(3) { animation-delay: 3s; }
+    #shayari p:nth-child(4) { animation-delay: 4s; }
+
+    /* —— Gallery —— */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+      gap: 1.5rem; margin-top: 2rem;
+    }
+    .gallery-item img {
+      width: 100%; border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      animation: fadeInUp .8s ease forwards;
+    }
+    .gallery-item .quote {
+      margin-top: .5rem; font-size: 1rem;
+      color: #ff6ec4;
+    }
+
+    /* —— Memories (Images) —— */
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+      gap: 2rem; margin: 2rem 0;
+    }
+    .image-grid img {
+      width: 100%; height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      animation: fadeInUp .8s ease forwards;
+    }
+
+    /* —— Final Message —— */
+    .final-message h1 {
+      font-size: 3rem; color: #ff6ec4; margin-bottom: 1rem;
+    }
+    .final-message p {
+      font-size: 1.5rem; color: #7873f5;
+    }
+
+    /* —— Buttons —— */
+    .button {
+      background: linear-gradient(45deg,#ff9a9e,#fad0c4);
+      color: #333; border: none; padding: .8rem 1.5rem;
+      font-size: 1.1rem; border-radius: 30px;
+      cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: transform .2s;
+    }
+    .button:hover { transform: scale(1.05); }
+
+    /* —— Keyframes —— */
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+    @keyframes popIn {
+      from { transform: scale(0); } to { transform: scale(1); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* —— Responsive —— */
+    @media (max-width: 768px) {
+      nav { flex-direction: column; gap: .8rem; }
+      section { padding: 5rem 1rem 3rem; }
+      h2 { font-size: 2rem; }
+      #home p { font-size: 1.3rem; }
+      #shayari p { font-size: 1.1rem; }
+      #music-toggle { bottom: 1rem; right: 1rem; }
+      .button { width: 90%; max-width: 300px; margin: 1rem auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Full‑screen Background Video -->
+  <video id="bg-video" autoplay muted loop>
+    <source src="" type="video/mp4" />
+  </video>
+
+  <!-- Background Music -->
+  <audio id="bg-music" src="" autoplay loop></audio>
+  <button id="music-toggle" aria-label="Mute/Unmute">🔊</button>
+
+  <!-- Sticky Header/Nav -->
+  <header>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#shayari">Shayari</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#videos">Memories</a>
+      <a href="#surprise">Surprise</a>
+    </nav>
+  </header>
+
+  <!-- Overlay Prompt -->
+  <div id="overlay">
+    <div class="overlay-content">
+      <h1>Is it your birthday today?</h1>
+      <button id="yes-btn">Yes 🎂</button>
+      <button id="no-btn">No 😊</button>
+    </div>
+  </div>
+
+  <!-- 1. Wisdom Section -->
+  <section id="home">
+    <h2>Happy Birthday!</h2>
+    <p>You’re one year older… I mean, wiser!</p>
+    <blockquote>“Age is just a number—every moment is a chance to shine brighter.”</blockquote>
+  </section>
+
+  <!-- 2. Shayari Section -->
+  <section id="shayari">
+    <p>तुम्हारी मुस्कान मेरे दिनों की पहली रोशनी है,</p>
+    <p>तेरी यादों का हर लम्हा मेरी ज़िंदगी की कहानी है,</p>
+    <p>इस खास दिन पर बस इतना कहना है,</p>
+    <p>तू जो साथ है, तो हर उम्र जवाँ लगती है।</p>
+  </section>
+
+  <!-- 3. Gallery -->
+  <section id="gallery">
+    <h2>Memorable Moments</h2>
+    <div class="gallery-grid">
+      <figure class="gallery-item">
+        <img src="image 3.JPG" alt="Photo 1" />
+        <figcaption class="quote">“Every love story is beautiful, but ours is my favorite.”</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="IMG_9409.JPG" alt="Photo 2" />
+        <figcaption class="quote">“With you, every moment sparkles.”</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="IMG-20250513-WA0001.jpg" alt="Photo 3" />
+        <figcaption class="quote">“You’re my today and all of my tomorrows.”</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="IMG-20250513-WA0003.jpg" alt="Photo 4" />
+        <figcaption class="quote">“Together is my favorite place to be.”</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="IMG-20250513-WA0010.jpg" alt="Photo 5" />
+        <figcaption class="quote">“In your eyes, I found my home.”</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="WhatsApp Image 2025-05-13 at 19.15.01_1477f225.jpg" alt="Photo 6" />
+        <figcaption class="quote">“You’re the piece my heart was missing.”</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="WhatsApp Image 2025-05-13 at 19.15.01_8657fb16.jpg" alt="Photo 7" />
+        <figcaption class="quote">“Love you more than words can say.”</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="WhatsApp Image 2025-05-13 at 19.14.58_9729e8b6.jpg" alt="Photo 8" />
+        <figcaption class="quote">“Your smile lights up my world.”</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="IMG-20250513-WA0010.jpg" alt="Photo 9" />
+        <figcaption class="quote">“You & me against the world.”</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="IMG-20250513-WA0009.jpg" alt="Photo 10" />
+        <figcaption class="quote">“Every day is special with you by my side.”</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 4. Memories as Images -->
+  <section id="videos">
+    <h2>Let's Celebrate!</h2>
+    <div class="image-grid">
+      <img src="one-piece-birthday.gif" alt="Celebration 1" />
+      <img src="lets-party-luffy.gif" alt="Celebration 2" />
+    </div>
+    <button id="celebrate-btn" class="button">Surprise! 🎉</button>
+  </section>
+
+  <!-- 5. Surprise Message -->
+  <section id="surprise">
+    <div class="final-message">
+      <h1>Happy Birthday!</h1>
+      <p>Love you to the moon and back 💖</p>
+    </div>
+  </section>
+
+  <!-- Confetti + Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+  <script>
+    // Overlay logic
+    const overlay = document.getElementById('overlay');
+    document.getElementById('yes-btn').onclick = hideOverlay;
+    document.getElementById('no-btn').onclick  = hideOverlay;
+    function hideOverlay() { overlay.style.display = 'none'; }
+
+    // Music toggle
+    const music = document.getElementById('bg-music');
+    const toggle = document.getElementById('music-toggle');
+    music.volume = 0.5;
+    toggle.addEventListener('click', () => {
+      if (music.paused) {
+        music.play(); toggle.textContent = '🔇';
+      } else {
+        music.pause(); toggle.textContent = '🔊';
+      }
+    });
+
+    // Smooth nav scroll
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        document
+          .querySelector(link.getAttribute('href'))
+          .scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // Celebrate button + confetti
+    document.getElementById('celebrate-btn').addEventListener('click', () => {
+      document
+        .getElementById('surprise')
+        .scrollIntoView({ behavior: 'smooth' });
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    });
+
+    // Auto‑confetti on Surprise view
+    const surprise = document.getElementById('surprise');
+    new IntersectionObserver(entries => {
+      entries.forEach(ent => {
+        if (ent.isIntersecting) {
+          confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+        }
+      });
+    }, { threshold: 0.5 }).observe(surprise);
+  </script>
+</body>
+</html>
